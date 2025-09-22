@@ -64,7 +64,7 @@ def lipa_na_mpesa(phone_number, amount, account_reference="OnlineOrder", transac
 def mpesa_callback():
     """Handle M-Pesa STK Push callback"""
     data = request.get_json()
-    print("🔔 Callback received:", data)
+    print("Callback received:", data)
 
     # Example: you can store this in a database for transaction tracking
     result_code = data.get("Body", {}).get("stkCallback", {}).get("ResultCode")
