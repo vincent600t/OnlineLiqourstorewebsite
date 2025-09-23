@@ -6,7 +6,7 @@ class User:
     @staticmethod
     def create_model(db):
         class UserModel(db.Model):
-            _tablename_ = 'users'
+            __tablename__ = 'users'  # ✅ table name
 
             id = db.Column(db.Integer, primary_key=True)
             name = db.Column(db.String(100), nullable=False)
@@ -17,7 +17,7 @@ class User:
             # Relationships (only CartItem backref will handle this)
             # user.cart_items will be accessible automatically
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ repr
                 return f"<User {self.email}>"
 
             def to_dict(self):

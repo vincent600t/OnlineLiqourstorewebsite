@@ -4,7 +4,7 @@ from models.order import Order
 
 
 def create_cart_routes(db, UserModel, ProductModel, CartItemModel):
-    cart_bp = Blueprint("cart", _name_, url_prefix="/api/cart")
+    cart_bp = Blueprint("cart", __name__, url_prefix="/api/cart")
 
     # Import Order + OrderItem models
     OrderModel, OrderItemModel = Order.create_model(db, UserModel, ProductModel)

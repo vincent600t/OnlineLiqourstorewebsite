@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 def create_rating_routes(db, UserModel, ProductModel, RatingModel):
-    rating_bp = Blueprint("ratings", _name_, url_prefix="/api/ratings")
+    rating_bp = Blueprint("ratings", __name__, url_prefix="/api/ratings")
 
     # -------------------------------------------------------------------------
     # Add a rating to a product

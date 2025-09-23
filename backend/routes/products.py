@@ -3,7 +3,8 @@ from sqlalchemy import or_
 
 
 def create_product_routes(db, ProductModel):
-    product_bp = Blueprint("products", _name_, url_prefix="/api/products")
+    # ✅ fixed _name_ → __name__
+    product_bp = Blueprint("products", __name__, url_prefix="/api/products")
 
     # -------------------------------------------------------------------------
     # Get all products or filter by category
@@ -21,6 +22,7 @@ def create_product_routes(db, ProductModel):
             "products": [p.to_dict() for p in products],
             "total": len(products)
         })
+
 
     # -------------------------------------------------------------------------
     # Search products

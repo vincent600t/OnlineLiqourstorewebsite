@@ -6,7 +6,7 @@ class Rating:
     @staticmethod
     def create_model(db, UserModel, ProductModel):
         class RatingModel(db.Model):
-            _tablename_ = "ratings"
+            __tablename__ = "ratings"  # ✅ fixed
 
             id = db.Column(db.Integer, primary_key=True)
 
@@ -23,7 +23,7 @@ class Rating:
             user = db.relationship(UserModel, backref="ratings")
             product = db.relationship(ProductModel, backref="ratings")
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ fixed
                 return f"<Rating {self.rating} stars by User {self.user_id} on Product {self.product_id}>"
 
             def to_dict(self):

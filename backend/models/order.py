@@ -6,7 +6,7 @@ class Order:
     @staticmethod
     def create_model(db, UserModel, ProductModel):
         class OrderModel(db.Model):
-            _tablename_ = "orders"
+            __tablename__ = "orders"  # ✅ fixed
 
             id = db.Column(db.Integer, primary_key=True)
             user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -14,10 +14,11 @@ class Order:
             status = db.Column(db.String(50), default="pending")  # pending, paid, shipped, completed, cancelled
             created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-            user = db.relationship("UserModel", backref="orders")
+            # Relationships
+            user = db.relationship(UserModel, backref="orders")  # ✅ use actual class
             items = db.relationship("OrderItemModel", backref="order", cascade="all, delete-orphan")
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ fixed
                 return f"<Order {self.id} - User {self.user_id}>"
 
             def to_dict(self):
@@ -31,7 +32,7 @@ class Order:
                 }
 
         class OrderItemModel(db.Model):
-            _tablename_ = "order_items"
+            __tablename__ = "order_items"  # ✅ fixed
 
             id = db.Column(db.Integer, primary_key=True)
             order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
@@ -39,9 +40,10 @@ class Order:
             quantity = db.Column(db.Integer, nullable=False, default=1)
             price = db.Column(db.Float, nullable=False)  # snapshot price at time of order
 
-            product = db.relationship("ProductModel")
+            # Relationship to Product
+            product = db.relationship(ProductModel)  # ✅ use actual class
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ fixed
                 return f"<OrderItem {self.id} - Order {self.order_id}>"
 
             def to_dict(self):

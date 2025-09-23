@@ -6,7 +6,7 @@ class Product:
     @staticmethod
     def create_model(db):
         class ProductModel(db.Model):
-            _tablename_ = 'products'
+            __tablename__ = 'products'  # ✅ fixed
 
             id = db.Column(db.Integer, primary_key=True)
             name = db.Column(db.String(100), nullable=False)
@@ -38,7 +38,7 @@ class Product:
             # Relationships (cart_items backref will attach here)
             # product.cart_items will be accessible
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ fixed
                 return f"<Product {self.name}>"
 
             def to_dict(self):

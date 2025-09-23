@@ -6,7 +6,7 @@ class CartItem:
     @staticmethod
     def create_model(db, UserModel, ProductModel):
         class CartItemModel(db.Model):
-            _tablename_ = 'cart_items'
+            __tablename__ = 'cart_items'  # ✅ fixed
 
             id = db.Column(db.Integer, primary_key=True)
             user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -15,10 +15,11 @@ class CartItem:
             added_at = db.Column(db.DateTime, default=datetime.utcnow)
 
             # ✅ Relationships with backrefs
-            user = db.relationship('UserModel', backref='cart_items')
-            product = db.relationship('ProductModel', backref='cart_items')
+            # We can pass the actual class instead of string because we’re in a factory
+            user = db.relationship(UserModel, backref='cart_items')  
+            product = db.relationship(ProductModel, backref='cart_items')
 
-            def _repr_(self):
+            def __repr__(self):  # ✅ fixed
                 return f"<CartItem user={self.user_id} product={self.product_id} qty={self.quantity}>"
 
             def to_dict(self):
