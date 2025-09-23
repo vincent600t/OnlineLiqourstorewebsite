@@ -17,7 +17,7 @@ MPESA_BASE_URL = os.getenv("MPESA_BASE_URL", "https://sandbox.safaricom.co.ke")
 CALLBACK_URL = os.getenv("CALLBACK_URL", "https://mydomain.com/pat")
 
 # Flask app (for handling callbacks)
-app = Flask(_name_)
+app = Flask(__name__)
 
 
 def get_access_token():
