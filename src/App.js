@@ -5,14 +5,15 @@ import Register from "./pages/Register";
 import Categories from "./pages/Categories";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
-import OrderSuccess from "./pages/OrderSuccess";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/contact" element={<Contact />} />
