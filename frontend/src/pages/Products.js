@@ -1,63 +1,103 @@
+// src/pages/Products.js
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import "./Products.css"; // import CSS file
+import Footer from "./Footer";
+import "./Products.css";
 
-function Products() {
-  const { categoryId } = useParams();
-  const { addToCart } = useCart();
+export default function Products() {
+  const { category } = useParams(); // from route param
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/api/products?category=${categoryId}`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data.products || [])) // ✅ only keep the array
-      .catch((err) => console.error("Failed to fetch products:", err));
-  }, [categoryId]);
+    if (!category) return; // safeguard
+
+    setLoading(true);
+    setError("");
+    fetch(`http://127.0.0.1:5000/api/products/${category}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch products");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+        setError("Could not load products. Please try again later.");
+        setLoading(false);
+      });
+  }, [category]);
 
   return (
-    <div className="products-page">
-      {/* Back link */}
-      <Link to="/categories" className="back-link">
-        ← Back to Categories
-      </Link>
+    <div className="page-container">
+      <div className="products-page">
+        {/* Header */}
+        <header className="header">
+          <img
+            src="/logo-removebg-preview.png"
+            alt="Logo"
+            className="header-logo"
+          />
+          <nav className="header-nav">
+            <Link to="/">Home</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/cart">Cart</Link>
+          </nav>
+        </header>
 
-      {/* Title */}
-      <h1 className="category-title">{categoryId}</h1>
+        {/* Main Content */}
+        <main className="products-content">
+          {/* 🔹 Back to Categories button */}
+          <div className="back-link">
+            <Link to="/categories">← Back to Categories</Link>
+          </div>
 
-      {/* Product grid */}
-      <div className="products-grid">
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className="product-card">
-              {/* Product image */}
-              <img
-                src={product.image || "https://via.placeholder.com/300x200"}
-                alt={product.name}
-                className="product-image"
-              />
+          <h1>
+            {category
+              ? category.charAt(0).toUpperCase() + category.slice(1)
+              : "All"}{" "}
+            Products
+          </h1>
 
-              {/* Product details */}
-              <div className="product-info">
-                <h3 className="product-name">{product.name}</h3>
-                <p className="product-price">${product.price.toFixed(2)}</p>
+          {loading && <p className="loading">Loading products...</p>}
+          {error && <p className="error">{error}</p>}
 
-                {/* Add to Cart button */}
-                <button
-                  onClick={() => addToCart(product)}
-                  className="add-to-cart-btn"
-                >
-                  Add to Cart
-                </button>
-              </div>
+          {!loading && !error && (
+            <div className="products-grid">
+              {products.length > 0 ? (
+                products.map((p) => (
+                  <div key={p.id} className="product-card">
+                    <img
+                      src={
+                        p.image ||
+                        "https://via.placeholder.com/300x200?text=No+Image"
+                      }
+                      alt={p.name || "Unnamed Product"}
+                      className="product-img"
+                    />
+                    <div className="product-info">
+                      <h2>{p.name || "Unnamed Product"}</h2>
+                      <p>
+                        {p.price !== undefined
+                          ? `$${p.price.toFixed(2)}`
+                          : "Price not available"}
+                      </p>
+                      <button className="add-btn">Add to Cart</button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No products found for this category.</p>
+              )}
             </div>
-          ))
-        ) : (
-          <p>No products found in this category.</p>
-        )}
+          )}
+        </main>
       </div>
+
+      <Footer />
     </div>
   );
 }
-
-export default Products;

@@ -1,47 +1,27 @@
-from flask import Blueprint, jsonify
-import requests
+from flask import Flask, jsonify
+from flask_cors import CORS
 
-category_bp = Blueprint("category", __name__)
+app = Flask(__name__)
+CORS(app)
 
-COCKTAIL_API_KEY = "1"  # Free key from TheCocktailDB
+# Fake product database
+products = [
+    {"id": 1, "name": "Johnnie Walker Black Label", "price": 35.99, "image": "https://via.placeholder.com/300x200", "category": "whiskey"},
+    {"id": 2, "name": "Jack Daniel's Old No. 7", "price": 25.99, "image": "https://via.placeholder.com/300x200", "category": "whiskey"},
+    {"id": 3, "name": "Jameson Irish Whiskey", "price": 29.99, "image": "https://via.placeholder.com/300x200", "category": "whiskey"},
+    {"id": 4, "name": "Absolut Vodka", "price": 22.99, "image": "https://via.placeholder.com/300x200", "category": "vodka"},
+    {"id": 5, "name": "Smirnoff Vodka", "price": 19.99, "image": "https://via.placeholder.com/300x200", "category": "vodka"},
+    {"id": 6, "name": "Heineken", "price": 12.99, "image": "https://via.placeholder.com/300x200", "category": "beer"},
+    {"id": 7, "name": "Guinness", "price": 14.99, "image": "https://via.placeholder.com/300x200", "category": "beer"},
+    {"id": 8, "name": "Bacardi Rum", "price": 24.99, "image": "https://via.placeholder.com/300x200", "category": "rum"},
+    {"id": 9, "name": "Captain Morgan Rum", "price": 26.99, "image": "https://via.placeholder.com/300x200", "category": "rum"},
+    {"id": 10, "name": "Tanqueray Gin", "price": 27.99, "image": "https://via.placeholder.com/300x200", "category": "gin"},
+]
 
+@app.route("/api/products/<category>", methods=["GET"])
+def get_products_by_category(category):
+    category_products = [p for p in products if p["category"].lower() == category.lower()]
+    return jsonify(category_products)
 
-# ✅ Get all categories
-@category_bp.route("/api/categories", methods=["GET"])
-def get_categories():
-    url = f"https://www.thecocktaildb.com/api/json/v1/{COCKTAIL_API_KEY}/list.php?c=list"
-    resp = requests.get(url)
-    data = resp.json()
-
-    categories = []
-    for item in data.get("drinks", []):
-        cat = item.get("strCategory")
-        categories.append({
-            "id": cat.replace(" ", "_"),   # safer for URLs
-            "name": cat,
-            "image": f"https://www.thecocktaildb.com/images/media/drink/vrwquq1478252802.jpg"  # fallback image
-        })
-
-    return jsonify(categories)
-
-
-# ✅ Get products by category
-@category_bp.route("/api/products/<category_id>", methods=["GET"])
-def get_products_by_category(category_id):
-    # category_id will be like "Ordinary_Drink"
-    category_name = category_id.replace("_", " ")
-
-    url = f"https://www.thecocktaildb.com/api/json/v1/{COCKTAIL_API_KEY}/filter.php?c={category_name}"
-    resp = requests.get(url)
-    data = resp.json()
-
-    products = []
-    for item in data.get("drinks", []):
-        products.append({
-            "id": item.get("idDrink"),
-            "name": item.get("strDrink"),
-            "image": item.get("strDrinkThumb"),
-            "price": 10  # mock price since API has none
-        })
-
-    return jsonify(products)
+if __name__ == "__main__":
+    app.run(debug=True)

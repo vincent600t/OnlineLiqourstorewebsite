@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Footer from "./Footer"; // make sure Footer is imported
+import { Link } from "react-router-dom";
+import Footer from "./Footer"; 
 import "./Categories.css";
 
 const categories = [
@@ -43,34 +43,31 @@ const categories = [
 ];
 
 export default function Categories() {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("access_token"); // remove token if stored
-    navigate("/login");
-  };
-
   return (
     <div className="page-container">
       <div className="categories-page">
+        {/* Header */}
         <header className="header">
           <img src="/logo-removebg-preview.png" alt="Logo" className="header-logo" />
           <nav className="header-nav">
             <Link to="/">Home</Link>
+            <Link to="/products">Products</Link> {/* 🔹 Added Products button */}
             <Link to="/contact">Contact</Link>
             <Link to="/cart">Cart</Link>
-            <button onClick={handleLogout} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer" }}>
-              Logout
-            </button>
           </nav>
         </header>
 
+        {/* Main content */}
         <main className="categories-content">
           <h1>Our Categories</h1>
 
           <div className="categories-grid">
             {categories.map((cat) => (
-              <div key={cat.id} className="category-card" style={{ backgroundImage: `url(${cat.image})` }}>
+              <div
+                key={cat.id}
+                className="category-card"
+                style={{ backgroundImage: `url(${cat.image})` }}
+              >
                 <div className="overlay">
                   <h2>{cat.name}</h2>
                   <Link to={`/products/${cat.id}`} className="explore-link">
@@ -83,7 +80,7 @@ export default function Categories() {
         </main>
       </div>
 
-      {/* Footer at the bottom */}
+      {/* Footer */}
       <Footer />
     </div>
   );

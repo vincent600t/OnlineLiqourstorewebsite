@@ -19,7 +19,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/categories" element={<Categories />} />
-          <Route path="/products/:categoryId" element={<Products />} /> {/* ✅ New route */}
+          {/* ✅ Fixed: param name now matches Products.js */}
+          <Route path="/products/:category" element={<Products />} />  
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />

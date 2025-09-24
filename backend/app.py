@@ -12,7 +12,7 @@ from routes import register_routes
 from utils.data_initializer import initialize_data
 
 # ✅ Import blueprints
-from routes.category_ap import category_bp
+from routes.category_api import category_bp
 
 # -----------------------------------------------------------------------------
 # Flask App Initialization
@@ -42,7 +42,7 @@ UserModel, ProductModel, CartItemModel, RatingModel = init_models(db)
 # -----------------------------------------------------------------------------
 register_routes(app, db, UserModel, ProductModel, CartItemModel, RatingModel)
 
-# ✅ Register category API routes
+# ✅ Register category API routes (only once)
 app.register_blueprint(category_bp)
 
 # -----------------------------------------------------------------------------
