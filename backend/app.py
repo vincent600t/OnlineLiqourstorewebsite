@@ -12,7 +12,7 @@ from routes import register_routes
 from utils.data_initializer import initialize_data
 
 # ✅ Import the new categories blueprint
-from routes.category_ap import category_bp  
+from routes.category_api import category_bp  
 
 # -----------------------------------------------------------------------------
 # Flask App Initialization

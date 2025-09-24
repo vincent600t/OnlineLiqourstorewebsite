@@ -1,0 +1,133 @@
+/* Container */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  font-family: Inter, Arial, sans-serif;
+  position: relative;
+  padding: 1rem;
+}
+
+/* Logo */
+.login-logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 110px;
+  height: auto;
+}
+
+/* Top-right nav */
+.login-nav {
+  position: absolute;
+  top: 35px;
+  right: 30px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.login-nav a {
+  text-decoration: none;
+  color: #000;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Form */
+.login-form {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.login-form h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  text-align: center;
+  margin: 0;
+}
+
+.login-form p.subtitle {
+  font-size: 16px;
+  color: #111;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+/* Input groups */
+.login-form label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #111;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
+}
+
+/* Checkbox */
+.login-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.login-checkbox label {
+  font-size: 13px;
+  color: #111;
+}
+
+.login-checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+/* Button */
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.2s ease;
+}
+
+.login-button:disabled {
+  background-color: #ff9a9a;
+  cursor: not-allowed;
+}
+
+/* Register link */
+.login-form p {
+  text-align: center;
+  font-size: 13px;
+  color: #111;
+}
+
+.login-form p a {
+  color: #ff0000;
+  text-decoration: none;
+  font-weight: 600;
+}
