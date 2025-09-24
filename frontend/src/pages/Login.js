@@ -10,8 +10,9 @@ export default function Login() {
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e?.preventDefault();
+
     if (!email.trim() || !password.trim()) {
       alert("Please fill in all fields.");
       return;
@@ -24,7 +25,35 @@ export default function Login() {
       alert("You must confirm you are 18 and above to proceed.");
       return;
     }
-    navigate("/categories");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Login failed");
+        return;
+      }
+
+      // Save JWT token to localStorage
+      localStorage.setItem("access_token", data.access_token);
+
+      // Optionally save user info
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Navigate to categories page
+      navigate("/categories");
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -86,8 +115,7 @@ export default function Login() {
         </button>
 
         <p>
-          Don’t have an account?{" "}
-          <Link to="/register">Register</Link>
+          Don’t have an account? <Link to="/register">Register</Link>
         </p>
       </form>
     </div>
