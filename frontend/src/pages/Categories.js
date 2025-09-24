@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "./Footer"; // make sure Footer is imported
 import "./Categories.css";
 
@@ -42,8 +42,14 @@ const categories = [
   }
 ];
 
-
 export default function Categories() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token"); // remove token if stored
+    navigate("/login");
+  };
+
   return (
     <div className="page-container">
       <div className="categories-page">
@@ -53,6 +59,9 @@ export default function Categories() {
             <Link to="/">Home</Link>
             <Link to="/contact">Contact</Link>
             <Link to="/cart">Cart</Link>
+            <button onClick={handleLogout} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer" }}>
+              Logout
+            </button>
           </nav>
         </header>
 
