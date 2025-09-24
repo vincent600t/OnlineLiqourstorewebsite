@@ -11,8 +11,8 @@ from models import init_models
 from routes import register_routes
 from utils.data_initializer import initialize_data
 
-# ✅ Import the new categories blueprint
-from routes.category_ap import category_bp  
+# ✅ Import blueprints
+from routes.category_ap import category_bp
 
 # -----------------------------------------------------------------------------
 # Flask App Initialization

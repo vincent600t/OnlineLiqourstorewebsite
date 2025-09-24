@@ -1,12 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import datetime
 
-bcrypt = Bcrypt()
+bcrypt = Bcrypt()  # ✅ Only one instance
 
 def create_auth_routes(db, UserModel):
-    # Correct Blueprint definition
     auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
     # -------------------------------------------------------------------------
@@ -25,13 +23,20 @@ def create_auth_routes(db, UserModel):
         if UserModel.query.filter_by(email=email).first():
             return jsonify({"error": "Email already registered"}), 400
 
+        # Hash the password
         hashed_pw = bcrypt.generate_password_hash(password).decode("utf-8")
+
+        # Save the user
         new_user = UserModel(name=name, email=email, password_hash=hashed_pw)
         db.session.add(new_user)
         db.session.commit()
 
+        # Auto-login after registration
+        access_token = create_access_token(identity=new_user.id)
+
         return jsonify({
             "message": "User registered successfully",
+            "access_token": access_token,
             "user": new_user.to_dict()
         }), 201
 
