@@ -1,43 +1,140 @@
 .cart-page {
-  max-width: 900px;
+  max-width: 960px;
   margin: 40px auto;
   text-align: center;
+  font-family: 'Arial', sans-serif;
+  padding: 0 10px;
+}
+
+.cart-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.cart-table-container {
+  overflow-x: auto;
 }
 
 .cart-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  margin: 0 auto 20px auto;
+  min-width: 600px;
+  transition: all 0.3s ease;
 }
 
 .cart-table th,
 .cart-table td {
-  border: 1px solid #ddd;
-  padding: 12px;
+  padding: 12px 15px;
+  transition: background 0.2s ease;
+}
+
+.cart-table th {
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+  background: #f9f9f9;
+}
+
+.cart-table td {
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+.cart-table tbody tr:hover {
+  background: #f1f1f1;
 }
 
 .cart-table img {
+  width: 50px;
+  height: auto;
   border-radius: 5px;
+  margin-right: 8px;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+}
+
+.cart-table img:hover {
+  transform: scale(1.05);
+}
+
+.quantity-input {
+  width: 60px;
+  text-align: center;
+  padding: 6px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: border 0.2s ease;
+}
+
+.quantity-input:focus {
+  border-color: #e63946;
+  outline: none;
 }
 
 .remove-btn {
   background: none;
   border: none;
-  color: red;
+  color: #e63946;
   font-weight: bold;
   cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.remove-btn:hover {
+  color: #d62828;
+  transform: scale(1.05);
 }
 
 .checkout-btn {
   background: #e63946;
   color: white;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   margin-top: 20px;
+  transition: background 0.2s ease, transform 0.1s ease;
+  width: 100%;
+  max-width: 300px;
 }
+
 .checkout-btn:hover {
   background: #d62828;
+  transform: scale(1.03);
+}
+
+.total-row td {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .cart-title {
+    font-size: 28px;
+  }
+  .cart-table th, .cart-table td {
+    padding: 10px;
+  }
+  .quantity-input {
+    width: 50px;
+  }
+  .checkout-btn {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-title {
+    font-size: 24px;
+  }
+  .quantity-input {
+    width: 45px;
+  }
+  .checkout-btn {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
 }
