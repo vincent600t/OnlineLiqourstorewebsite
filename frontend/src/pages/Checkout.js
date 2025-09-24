@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Categories.css"; // ensure header styles are applied
 
 /*
   Checkout:
@@ -46,11 +47,16 @@ export default function Checkout() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff", padding: 24, fontFamily: "Inter, Arial, sans-serif" }}>
-      <img src="/logo.png" alt="logo" style={{ position: "absolute", top: 20, right: 20, width: 72 }} />
-      <div style={{ position: "absolute", top: 28, right: 110, display: "flex", gap: 16 }}>
-        <Link to="/categories" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Home</Link>
-        <Link to="/cart" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Cart</Link>
-      </div>
+      
+      {/* === HEADER UPDATED TO MATCH CATEGORIES === */}
+      <header className="header">
+        <img src="/logo-removebg-preview.png" alt="Logo" className="header-logo" />
+        <nav className="header-nav">
+          <Link to="/categories">Home</Link>
+          <Link to="/cart">Cart</Link>
+        </nav>
+      </header>
+      {/* === END HEADER === */}
 
       <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 40 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700 }}>Checkout</h1>

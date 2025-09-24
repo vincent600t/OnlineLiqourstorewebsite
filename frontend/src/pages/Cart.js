@@ -1,83 +1,52 @@
-import React, { useContext } from "react";
-import { CartContext } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
-import Footer from "./Footer";
-import "./Cart.css";
+ import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "./Categories.css"; // ensures header styles are applied
 
-const Cart = () => {
-  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
-  const navigate = useNavigate();
+export default function Cart() {
+  const [items, setItems] = useState([]);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  useEffect(() => {
+    const raw = localStorage.getItem("bw_cart");
+    setItems(raw ? JSON.parse(raw) : []);
+  }, []);
+
+  const subtotal = items.reduce((s, it) => s + (it.price || 0), 0);
 
   return (
-    <div className="cart-page">
-      <h1 className="cart-title">Cart</h1>
+    <div style={{ minHeight: "100vh", backgroundColor: "#fff", padding: 24, fontFamily: "Inter, Arial, sans-serif" }}>
+      
+      {/* === HEADER UPDATED TO MATCH CATEGORIES === */}
+      <header className="header">
+        <img src="/logo-removebg-preview.png" alt="Logo" className="header-logo" />
+        <nav className="header-nav">
+          <Link to="/categories">Home</Link>
+          <Link to="/cart">Cart</Link>
+        </nav>
+      </header>
+      {/* === END HEADER === */}
 
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div className="cart-table-container">
-          <table className="cart-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <img src={item.image} alt={item.name} />
-                    {item.name}
-                  </td>
-                  <td>${item.price.toFixed(2)}</td>
-                  <td>
-                    <input
-                      className="quantity-input"
-                      type="number"
-                      min="1"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        updateQuantity(item.id, parseInt(e.target.value))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              <tr className="total-row">
-                <td colSpan="2" style={{ textAlign: "left" }}>
-                  Total
-                </td>
-                <td colSpan="2" style={{ textAlign: "right" }}>
-                  ${total.toFixed(2)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div style={{ maxWidth: 720, margin: "0 auto", paddingTop: 40 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 700 }}>Your Cart</h1>
+        {items.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <div style={{ display: "grid", gap: 12, marginTop: 18 }}>
+            {items.map((it, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
+                <span>{it.name}</span>
+                <span>${it.price.toFixed(2)}</span>
+              </div>
+            ))}
+            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+          </div>
+        )}
+        <div style={{ marginTop: 18 }}>
+          <Link to="/checkout" style={{ display: "inline-block", padding: "10px 14px", background: "#000", color: "#fff", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>Proceed to Checkout</Link>
         </div>
-      )}
-
-      {cart.length > 0 && (
-        <button className="checkout-btn" onClick={() => navigate("/checkout")}>
-          Checkout
-        </button>
-      )}
-
-      <Footer />
+      </div>
     </div>
   );
-};
-
-export default Cart;
+}

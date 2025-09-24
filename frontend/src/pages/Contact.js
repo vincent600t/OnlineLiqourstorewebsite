@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "./Categories.css"; // ensures header styles are applied
 
 /*
   Simple Contact page with form, submit shows alert and returns to categories
@@ -20,11 +21,16 @@ export default function Contact() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff", padding: 24, fontFamily: "Inter, Arial, sans-serif" }}>
-      <img src="/logo.png" alt="logo" style={{ position: "absolute", top: 20, right: 20, width: 72 }} />
-      <div style={{ position: "absolute", top: 28, right: 110, display: "flex", gap: 16 }}>
-        <Link to="/categories" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Home</Link>
-        <Link to="/cart" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Cart</Link>
-      </div>
+      
+      {/* === HEADER UPDATED TO MATCH CATEGORIES === */}
+      <header className="header">
+        <img src="/logo-removebg-preview.png" alt="Logo" className="header-logo" />
+        <nav className="header-nav">
+          <Link to="/categories">Home</Link>
+          <Link to="/cart">Cart</Link>
+        </nav>
+      </header>
+      {/* === END HEADER === */}
 
       <div style={{ maxWidth: 720, margin: "0 auto", paddingTop: 40 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700 }}>Contact Us</h1>
