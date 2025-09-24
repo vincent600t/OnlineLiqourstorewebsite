@@ -1,158 +1,104 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+ import React, { useState } from "react";
 
-/*
-  Login page:
-  - centered card
-  - title "Login" centered
-  - subtitle "Sign in to your account"
-  - labels above inputs
-  - checkbox "I agree, I am 18 and above" aligned with inputs
-  - bright red login button (#FF0000)
-  - top-right small nav "Login  Register" (non-button looking links)
-  - logo at top-right as well (public/logo.png) — ensure file exists
-*/
+const BASE_URL = "http://localhost:5000/api/auth"; // replace later with your deployed backend URL
 
-const isValidEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
-
-export default function Login() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [agreed, setAgreed] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e?.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    if (!email.trim() || !password.trim()) {
-      alert("Please fill in all fields.");
-      return;
-    }
-    if (!isValidEmail(email)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-    if (!agreed) {
-      alert("You must confirm you are 18 and above to proceed.");
-      return;
-    }
+    try {
+      const res = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // For now, fake success. In real app, call backend.
-    navigate("/categories");
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+      } else {
+        // Save token & user info
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        alert("Login successful!");
+        // TODO: navigate to home or dashboard page
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "#ffffff",
-      fontFamily: "Inter, Arial, sans-serif",
-      position: "relative",
-      padding: "1rem"
-    }}>
-      {/* Logo top-right */}
-      <img
-        src="/logo.png"
-        alt="Black and White Logo"
-        style={{ position: "absolute", top: 20, right: 20, width: 72, height: "auto" }}
-      />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Black & White Liquor Store
+        </h1>
 
-      {/* top-right small nav (looks like text) */}
-      <div style={{ position: "absolute", top: 28, right: 110, display: "flex", gap: 16, alignItems: "center" }}>
-        <Link to="/login" style={{ textDecoration: "none", color: "#000", cursor: "pointer", fontWeight: 600 }}>Login</Link>
-        <Link to="/register" style={{ textDecoration: "none", color: "#000", cursor: "pointer", fontWeight: 600 }}>Register</Link>
-      </div>
+        {error && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleLogin} style={{
-        width: "100%",
-        maxWidth: 420,
-        background: "#fff",
-        padding: "2rem",
-        borderRadius: 12,
-        boxShadow: "0 6px 20px rgba(0,0,0,0.08)"
-      }}>
-        <h2 style={{ fontSize: 28, fontWeight: 700, color: "#000", textAlign: "center", margin: 0 }}>Login</h2>
-        <p style={{ fontSize: 14, color: "#111", textAlign: "center", marginTop: 8, marginBottom: 20 }}>Sign in to your account</p>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="you@example.com"
+            />
+          </div>
 
-        {/* Email */}
-        <div style={{ marginBottom: 14 }}>
-          <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#111" }}>Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 15,
-              outline: "none",
-            }}
-            aria-label="Email"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Enter your password"
+            />
+          </div>
 
-        {/* Password */}
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ display: "block", fontSize: 13, marginBottom: 6, color: "#111" }}>Password</label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 8,
-              border: "1px solid #ddd",
-              fontSize: 15,
-              outline: "none",
-            }}
-            aria-label="Password"
-          />
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
 
-        {/* Checkbox inline with inputs */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-          <input
-            id="agreeLogin"
-            type="checkbox"
-            checked={agreed}
-            onChange={() => setAgreed(!agreed)}
-            style={{ width: 16, height: 16 }}
-          />
-          <label htmlFor="agreeLogin" style={{ fontSize: 13, color: "#111" }}>I agree, I am 18 and above</label>
-        </div>
-
-        {/* Login button */}
-        <button
-          type="submit"
-          disabled={!agreed}
-          style={{
-            width: "100%",
-            padding: "12px",
-            backgroundColor: agreed ? "#ff0000" : "#ff9a9a",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            fontWeight: 700,
-            fontSize: 15,
-            cursor: agreed ? "pointer" : "not-allowed",
-            marginBottom: 14,
-          }}
-        >
-          Login
-        </button>
-
-        <p style={{ textAlign: "center", fontSize: 13, color: "#111" }}>
+        <p className="mt-6 text-center text-sm text-gray-600">
           Don’t have an account?{" "}
-          <Link to="/register" style={{ color: "#ff0000", textDecoration: "none", fontWeight: 600 }}>Register</Link>
+          <a href="/register" className="text-black font-medium hover:underline">
+            Register
+          </a>
         </p>
-      </form>
+      </div>
     </div>
   );
 }
+
+export default Login;
