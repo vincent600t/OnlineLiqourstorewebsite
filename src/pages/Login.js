@@ -1,113 +1,104 @@
-import React, { useState } from "react";
+ import React, { useState } from "react";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const BASE_URL = "http://localhost:5000/api/auth"; // replace later with your deployed backend URL
 
-export default function Login() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isAdult, setIsAdult] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!isAdult) {
-      setError("You must confirm you are 18 years and above.");
-      return;
-    }
-
     setLoading(true);
+
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Login failed");
+        setError(data.error || "Login failed");
+      } else {
+        // Save token & user info
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        alert("Login successful!");
+        // TODO: navigate to home or dashboard page
       }
-
-      localStorage.setItem("token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      window.location.href = "/";
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="flex justify-between items-center p-6">
-        <div className="flex items-center gap-4">
-          <img src="/logo192.png" alt="logo" className="h-14 w-14 object-contain" />
-          <div className="text-xl font-semibold">BLACK &amp; WHITE</div>
-        </div>
-        <nav className="space-x-6 text-lg">
-          <a href="/login" className="hover:underline">Login</a>
-          <a href="/register" className="hover:underline">Register</a>
-        </nav>
-      </header>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Black & White Liquor Store
+        </h1>
 
-      <main className="flex-grow flex items-center justify-center px-4">
-        <div className="w-full max-w-lg">
-          <h1 className="text-5xl font-bold text-center mb-2">Login</h1>
-          <p className="text-center text-lg text-gray-700 mb-8">Sign in to your account</p>
+        {error && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-lg space-y-5">
-            <div>
-              <label className="block font-medium mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="you@example.com"
+            />
+          </div>
 
-            <div>
-              <label className="block font-medium mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Enter your password"
+            />
+          </div>
 
-            <div className="flex items-center">
-              <input
-                id="adult"
-                type="checkbox"
-                checked={isAdult}
-                onChange={() => setIsAdult(!isAdult)}
-                className="h-4 w-4 mr-3"
-              />
-              <label htmlFor="adult" className="text-base">I agree I am 18yrs and above</label>
-            </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-900 transition disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
 
-            {error && <div className="text-center text-red-600">{error}</div>}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded text-lg font-medium disabled:opacity-60"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-
-          <p className="text-center mt-6">
-            Don’t have an account? <a href="/register" className="text-red-600 underline">Register</a>
-          </p>
-        </div>
-      </main>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don’t have an account?{" "}
+          <a href="/register" className="text-black font-medium hover:underline">
+            Register
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
+
+export default Login;
