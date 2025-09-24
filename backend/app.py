@@ -8,11 +8,13 @@ import os
 
 # Import local modules
 from models import init_models
-from routes import register_routes
 from utils.data_initializer import initialize_data
 
 # ✅ Import the new categories blueprint
 from routes.category_ap import category_bp  
+
+# ✅ Import auth routes
+from routes.auth import create_auth_routes
 
 # -----------------------------------------------------------------------------
 # Flask App Initialization
@@ -40,9 +42,11 @@ UserModel, ProductModel, CartItemModel, RatingModel = init_models(db)
 # -----------------------------------------------------------------------------
 # Routes Initialization
 # -----------------------------------------------------------------------------
-register_routes(app, db, UserModel, ProductModel, CartItemModel, RatingModel)
+# ✅ Auth routes (register & login)
+auth_bp = create_auth_routes(db, UserModel, bcrypt)
+app.register_blueprint(auth_bp)
 
-# ✅ Register category API routes
+# ✅ Category API routes
 app.register_blueprint(category_bp)
 
 # -----------------------------------------------------------------------------

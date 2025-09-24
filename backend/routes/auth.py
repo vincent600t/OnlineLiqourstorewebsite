@@ -1,12 +1,7 @@
 from flask import Blueprint, request, jsonify
-from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import datetime
 
-bcrypt = Bcrypt()
-
-def create_auth_routes(db, UserModel):
-    # Correct Blueprint definition
+def create_auth_routes(db, UserModel, bcrypt):
     auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
     # -------------------------------------------------------------------------
@@ -30,9 +25,13 @@ def create_auth_routes(db, UserModel):
         db.session.add(new_user)
         db.session.commit()
 
+        # Remove sensitive info before sending back
+        user_data = new_user.to_dict()
+        user_data.pop("password_hash", None)
+
         return jsonify({
             "message": "User registered successfully",
-            "user": new_user.to_dict()
+            "user": user_data
         }), 201
 
     # -------------------------------------------------------------------------
@@ -49,10 +48,13 @@ def create_auth_routes(db, UserModel):
             return jsonify({"error": "Invalid email or password"}), 401
 
         access_token = create_access_token(identity=user.id)
+        user_data = user.to_dict()
+        user_data.pop("password_hash", None)
+
         return jsonify({
             "message": "Login successful",
             "access_token": access_token,
-            "user": user.to_dict()
+            "user": user_data
         })
 
     # -------------------------------------------------------------------------
@@ -65,6 +67,8 @@ def create_auth_routes(db, UserModel):
         user = UserModel.query.get(user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
-        return jsonify(user.to_dict())
+        user_data = user.to_dict()
+        user_data.pop("password_hash", None)
+        return jsonify(user_data)
 
     return auth_bp

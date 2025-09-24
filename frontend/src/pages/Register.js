@@ -12,7 +12,7 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
 
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e?.preventDefault();
 
     if (!name.trim() || !email.trim() || !password.trim() || !confirm.trim()) {
@@ -36,7 +36,25 @@ export default function Register() {
       return;
     }
 
-    navigate("/categories");
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || "Registration failed");
+        return;
+      }
+
+      alert("Account created successfully!");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+      alert("Server error. Please try again later.");
+    }
   };
 
   return (
