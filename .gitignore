@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 ##################################
@@ -59,3 +60,9 @@ __pycache__/
 *.pyd
 
 **/__pycache__/
+=======
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+>>>>>>> c5d077c2a418188ef15930fd5f7021f677526cab

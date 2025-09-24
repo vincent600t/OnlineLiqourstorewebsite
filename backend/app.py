@@ -11,6 +11,9 @@ from models import init_models
 from routes import register_routes
 from utils.data_initializer import initialize_data
 
+# ✅ Import the new categories blueprint
+from routes.category_ap import category_bp  
+
 # -----------------------------------------------------------------------------
 # Flask App Initialization
 # -----------------------------------------------------------------------------
@@ -38,6 +41,9 @@ UserModel, ProductModel, CartItemModel, RatingModel = init_models(db)
 # Routes Initialization
 # -----------------------------------------------------------------------------
 register_routes(app, db, UserModel, ProductModel, CartItemModel, RatingModel)
+
+# ✅ Register category API routes
+app.register_blueprint(category_bp)
 
 # -----------------------------------------------------------------------------
 # Health & Root Endpoints
