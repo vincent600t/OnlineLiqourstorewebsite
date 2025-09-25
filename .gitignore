@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Node modules
+node_modules/
+
+# ESLint cache
+.eslintcache
+
+# Build cache
+.cache/
