@@ -14,3 +14,7 @@ node_modules/
 # Python virtual environment
 venv/
 
+
+# Node cache
+frontend/node_modules/
+frontend/.cache/
