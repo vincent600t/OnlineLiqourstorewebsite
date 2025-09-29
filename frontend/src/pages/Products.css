@@ -145,7 +145,15 @@
 .header-nav a:hover {
   color: #ff4757;
 }
-
+.product-info{
+  display: flex;
+  flex-direction: column;
+}
+.product-cart-info{
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+}
 /* 🔹 Cart icon link */
 .cart-link {
   display: inline-flex;
