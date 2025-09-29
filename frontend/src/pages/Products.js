@@ -122,17 +122,20 @@ export default function Products() {
                     />
                     <div className="product-info">
                       <h2>{p.name || "Unnamed Product"}</h2>
-                      <p>
-                        {p.price !== undefined
-                          ? `$${p.price.toFixed(2)}`
-                          : "Price not available"}
-                      </p>
-                      <button
-                        className="add-btn"
-                        onClick={() => handleAddToCart(p)}
-                      >
-                        Add to Cart
-                      </button>
+                      <div className="product-cart-info">
+                        <p>
+                          {p.price !== undefined
+                            ? `$${p.price.toFixed(2)}`
+                            : "Price not available"}
+                        </p>
+                        <button
+                          className="add-btn"
+                          onClick={() => handleAddToCart(p)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+
                     </div>
                   </div>
                 ))
