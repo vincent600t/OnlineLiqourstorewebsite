@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // ✅ import axios
 import "./Login.css";
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -12,64 +11,60 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e?.preventDefault();
+    e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
       alert("Please fill in all fields.");
       return;
     }
+
     if (!isValidEmail(email)) {
       alert("Please enter a valid email address.");
       return;
     }
+
     if (!agreed) {
       alert("You must confirm you are 18 and above to proceed.");
       return;
     }
 
     try {
-      // ✅ use axios.post instead of fetch
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/auth/login",
-        { email, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("http://127.0.0.1:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-      const data = response.data;
+      const data = await response.json();
 
-      // Save JWT token to localStorage
+      if (!response.ok) {
+        alert(data.error || "Login failed");
+        return;
+      }
+
+      // Save JWT token and user info
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       navigate("/categories");
     } catch (err) {
-      // axios throws for non-2xx responses
-      if (err.response) {
-        alert(err.response.data.error || "Login failed");
-      } else {
-        alert("An error occurred. Please try again.");
-      }
-      console.error(err);
+      console.error("Login error:", err);
+      alert("Server error. Please try again later.");
     }
   };
 
   return (
     <div className="login-container">
-      <img
-        src="/logo-removebg-preview.png"
-        alt="Black and White Logo"
-        className="login-logo"
-      />
+      {/* Logo */}
+      <img src="/logo-removebg-preview.png" alt="Logo" className="login-logo" />
 
+      {/* Navigation */}
       <div className="login-nav">
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
       </div>
 
+      {/* Login Form */}
       <form onSubmit={handleLogin} className="login-form">
         <h2>Login</h2>
         <p className="subtitle">Sign in to your account</p>
@@ -77,9 +72,9 @@ export default function Login() {
         <div style={{ marginBottom: 14 }}>
           <label>Email</label>
           <input
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            type="email"
             aria-label="Email"
           />
         </div>
@@ -87,17 +82,17 @@ export default function Login() {
         <div style={{ marginBottom: 12 }}>
           <label>Password</label>
           <input
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            type="password"
             aria-label="Password"
           />
         </div>
 
         <div className="login-checkbox">
           <input
-            id="agreeLogin"
             type="checkbox"
+            id="agreeLogin"
             checked={agreed}
             onChange={() => setAgreed(!agreed)}
           />

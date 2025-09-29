@@ -12,7 +12,7 @@ export default function Register() {
   const [agreed, setAgreed] = useState(false);
   const navigate = useNavigate();
 
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e?.preventDefault();
 
     if (!name.trim() || !email.trim() || !password.trim() || !confirm.trim()) {
@@ -36,19 +36,31 @@ export default function Register() {
       return;
     }
 
-    navigate("/categories");
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Registration failed");
+        return;
+      }
+
+      alert("Account created successfully!");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+      alert("Server error. Please try again later.");
+    }
   };
 
   return (
     <div className="register-container">
-      {/* Logo top-left */}
-      <img
-        src="/logo-removebg-preview.png"
-        alt="Black and White Logo"
-        className="register-logo"
-      />
+      <img src="/logo-removebg-preview.png" alt="Logo" className="register-logo" />
 
-      {/* Nav top-right */}
       <div className="register-nav">
         <Link to="/categories">Home</Link>
         <Link to="/categories">Categories</Link>
@@ -60,51 +72,26 @@ export default function Register() {
 
         <div style={{ marginBottom: 14 }}>
           <label>Name</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            type="text"
-            aria-label="Name"
-          />
+          <input value={name} onChange={(e) => setName(e.target.value)} type="text" />
         </div>
 
         <div style={{ marginBottom: 14 }}>
           <label>Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            aria-label="Email"
-          />
+          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
         </div>
 
         <div style={{ marginBottom: 14 }}>
           <label>Password</label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            aria-label="Password"
-          />
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
         </div>
 
         <div style={{ marginBottom: 12 }}>
           <label>Confirm Password</label>
-          <input
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            type="password"
-            aria-label="Confirm Password"
-          />
+          <input value={confirm} onChange={(e) => setConfirm(e.target.value)} type="password" />
         </div>
 
         <div className="register-checkbox">
-          <input
-            type="checkbox"
-            id="agreeReg"
-            checked={agreed}
-            onChange={() => setAgreed(!agreed)}
-          />
+          <input type="checkbox" id="agreeReg" checked={agreed} onChange={() => setAgreed(!agreed)} />
           <label htmlFor="agreeReg">I agree, I am 18 and above</label>
         </div>
 
@@ -113,8 +100,7 @@ export default function Register() {
         </button>
 
         <p>
-          Already have an account?{" "}
-          <Link to="/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </form>
     </div>

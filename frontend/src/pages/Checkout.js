@@ -1,109 +1,299 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-/*
-  Checkout:
-  - collects shipping details (simple)
-  - choose delivery (standard/express)
-  - shows order summary from localStorage
-  - Place Order -> save order details to localStorage "bw_last_order" and navigate to /order-success
-*/
+import { useCart } from "../context/CartContext"; 
+import "./Checkout.css";
+import Footer from "./Footer";
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const [items, setItems] = useState([]);
+  const { cart, clearCart } = useCart();
   const [delivery, setDelivery] = useState("standard");
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({
+    cardNumber: "",
+    expiry: "",
+    cvv: "",
+    mpesaNumber: "",
+  });
+  const [errors, setErrors] = useState({}); // ✅ field-specific errors
 
-  useEffect(() => {
-    const raw = localStorage.getItem("bw_cart");
-    setItems(raw ? JSON.parse(raw) : []);
-  }, []);
-
-  const subtotal = items.reduce((s, it) => s + (it.price || 0), 0);
+  const subtotal = cart.reduce((s, it) => s + it.price * it.quantity, 0);
   const deliveryFee = delivery === "express" ? 3.39 : 0;
   const total = subtotal + deliveryFee;
 
-  const handlePlaceOrder = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.address.trim()) {
-      alert("Please fill in name, email and address.");
+  const handlePlaceOrderClick = () => {
+    let newErrors = {};
+
+    if (!form.name.trim()) {
+      newErrors.name = "Please enter your full name.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email.trim() || !emailRegex.test(form.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    const phoneRegex = /^[0-9]{10,}$/;
+    if (!form.phone.trim() || !phoneRegex.test(form.phone)) {
+      newErrors.phone = "Phone number must be at least 10 digits and contain only numbers.";
+    }
+
+    if (!form.address.trim()) {
+      newErrors.address = "Please enter your street address.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
+    setShowPayment(true);
+  };
+
+  const confirmPayment = () => {
+    if (!paymentMethod) {
+      setErrors({ payment: "Please select a payment method." });
+      return;
+    }
+
+    if (
+      paymentMethod === "Credit Card" &&
+      (!paymentDetails.cardNumber || !paymentDetails.expiry || !paymentDetails.cvv)
+    ) {
+      setErrors({ payment: "Please fill in all credit card details." });
+      return;
+    }
+
+    if (paymentMethod === "M-Pesa" && !paymentDetails.mpesaNumber) {
+      setErrors({ payment: "Please enter your M-Pesa phone number." });
+      return;
+    }
+
     const order = {
       id: "BW" + Math.floor(Math.random() * 900000 + 100000),
-      items,
+      items: cart,
       subtotal,
       delivery: delivery === "express" ? "Express" : "Standard",
       deliveryFee,
       total,
+      payment: {
+        method: paymentMethod,
+        details:
+          paymentMethod === "Credit Card"
+            ? { cardNumber: paymentDetails.cardNumber, expiry: paymentDetails.expiry }
+            : paymentMethod === "M-Pesa"
+            ? { mpesaNumber: paymentDetails.mpesaNumber }
+            : {},
+      },
       customer: form,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
     };
+
     localStorage.setItem("bw_last_order", JSON.stringify(order));
-    localStorage.removeItem("bw_cart");
+    clearCart();
     navigate("/order-success");
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fff", padding: 24, fontFamily: "Inter, Arial, sans-serif" }}>
-      <img src="/logo.png" alt="logo" style={{ position: "absolute", top: 20, right: 20, width: 72 }} />
-      <div style={{ position: "absolute", top: 28, right: 110, display: "flex", gap: 16 }}>
-        <Link to="/categories" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Home</Link>
-        <Link to="/cart" style={{ textDecoration: "none", color: "#000", fontWeight: 600 }}>Cart</Link>
+    <div className="checkout-wrapper">
+      <img src="/logo-removebg-preview.png" alt="logo" className="checkout-logo" />
+      <div className="checkout-nav">
+        <Link to="/categories">Home</Link>
+        <Link to="/cart">Cart</Link>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", paddingTop: 40 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700 }}>Checkout</h1>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 24, marginTop: 18 }}>
+      <div className="checkout-container">
+        <h1 className="checkout-title">Checkout</h1>
+        <div className="checkout-grid">
           {/* shipping */}
-          <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700 }}>Shipping Information</h2>
-            <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
-              <input placeholder="Full Name" value={form.name} onChange={(e)=>setForm({...form, name:e.target.value})} style={{ padding: 10, borderRadius: 8, border: "1px solid #ddd" }} />
-              <input placeholder="Email Address" value={form.email} onChange={(e)=>setForm({...form, email:e.target.value})} style={{ padding: 10, borderRadius: 8, border: "1px solid #ddd" }} />
-              <input placeholder="Phone Number" value={form.phone} onChange={(e)=>setForm({...form, phone:e.target.value})} style={{ padding: 10, borderRadius: 8, border: "1px solid #ddd" }} />
-              <input placeholder="Street Address" value={form.address} onChange={(e)=>setForm({...form, address:e.target.value})} style={{ padding: 10, borderRadius: 8, border: "1px solid #ddd" }} />
+          <div className="checkout-form">
+            <h2>Shipping Information</h2>
+            <div className="form-fields">
+              <input
+                placeholder="Full Name"
+                value={form.name}
+                className={errors.name ? "error-input" : ""}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+              {errors.name && <p className="error-message">{errors.name}</p>}
+
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={form.email}
+                className={errors.email ? "error-input" : ""}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+              {errors.email && <p className="error-message">{errors.email}</p>}
+
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                value={form.phone}
+                className={errors.phone ? "error-input" : ""}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, ""); // only numbers
+                  setForm({ ...form, phone: value });
+                }}
+                maxLength={15}
+              />
+              {errors.phone && <p className="error-message">{errors.phone}</p>}
+
+              <input
+                placeholder="Street Address"
+                value={form.address}
+                className={errors.address ? "error-input" : ""}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+              />
+              {errors.address && <p className="error-message">{errors.address}</p>}
             </div>
 
-            <div style={{ marginTop: 18 }}>
-              <h3 style={{ fontWeight: 700 }}>Delivery Options</h3>
-              <label style={{ display: "block", marginTop: 8 }}>
-                <input type="radio" checked={delivery==="standard"} onChange={()=>setDelivery("standard")} /> Standard Delivery (3–5 days) — Free
+            <div className="delivery-options">
+              <h3>Delivery Options</h3>
+              <label>
+                <input
+                  type="radio"
+                  checked={delivery === "standard"}
+                  onChange={() => setDelivery("standard")}
+                />{" "}
+                Standard Delivery (3–5 days) — Free
               </label>
-              <label style={{ display: "block", marginTop: 6 }}>
-                <input type="radio" checked={delivery==="express"} onChange={()=>setDelivery("express")} /> Express Delivery (1–2 days) — $3.39
+              <label>
+                <input
+                  type="radio"
+                  checked={delivery === "express"}
+                  onChange={() => setDelivery("express")}
+                />{" "}
+                Express Delivery (1–2 days) — $3.39
               </label>
             </div>
           </div>
 
           {/* order summary */}
-          <div style={{ border: "1px solid #eee", padding: 16, borderRadius: 8 }}>
-            <h3 style={{ marginTop: 0, fontWeight: 700 }}>Order Summary</h3>
-            <div style={{ marginTop: 12 }}>
-              {items.length === 0 ? <p>No items.</p> : items.map((it, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                  <span>{it.name}</span><span>${it.price.toFixed(2)}</span>
-                </div>
-              ))}
+          <div className="order-summary">
+            <h3>Order Summary</h3>
+            <div className="order-items">
+              {cart.length === 0 ? (
+                <p>No items.</p>
+              ) : (
+                cart.map((it, i) => (
+                  <div key={i} className="order-item">
+                    <span>
+                      {it.name} × {it.quantity}
+                    </span>
+                    <span>${(it.price * it.quantity).toFixed(2)}</span>
+                  </div>
+                ))
+              )}
             </div>
-            <hr style={{ margin: "12px 0" }} />
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span>Subtotal</span><strong>${subtotal.toFixed(2)}</strong>
+            <hr />
+            <div className="summary-line">
+              <span>Subtotal</span>
+              <strong>${subtotal.toFixed(2)}</strong>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span>Delivery</span><strong>${deliveryFee.toFixed(2)}</strong>
+            <div className="summary-line">
+              <span>Delivery</span>
+              <strong>${deliveryFee.toFixed(2)}</strong>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontWeight: 800 }}>
-              <span>Total</span><span>${total.toFixed(2)}</span>
+            <div className="summary-total">
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
             </div>
 
-            <div style={{ marginTop: 12 }}>
-              <button onClick={handlePlaceOrder} style={{ width: "100%", background: "#000", color: "#fff", padding: 10, borderRadius: 8, border: "none", fontWeight: 700 }}>Place Order</button>
-              <Link to="/cart" style={{ display: "block", marginTop: 10, textAlign: "center", padding: "8px 12px", borderRadius: 8, border: "1px solid #000", color: "#000", textDecoration: "none" }}>Back to Cart</Link>
+            <div className="summary-actions">
+              {!showPayment ? (
+                <button onClick={handlePlaceOrderClick}>Place Order</button>
+              ) : (
+                <div className="payment-methods">
+                  <h3>Choose Payment Method</h3>
+
+                  {/* Credit Card */}
+                  <label>
+                    <input
+                      type="radio"
+                      checked={paymentMethod === "Credit Card"}
+                      onChange={() => setPaymentMethod("Credit Card")}
+                    />{" "}
+                    Credit Card
+                  </label>
+                  {paymentMethod === "Credit Card" && (
+                    <div className="payment-extra">
+                      <input
+                        type="text"
+                        placeholder="Card Number"
+                        value={paymentDetails.cardNumber}
+                        onChange={(e) =>
+                          setPaymentDetails({ ...paymentDetails, cardNumber: e.target.value })
+                        }
+                      />
+                      <input
+                        type="text"
+                        placeholder="Expiry Date (MM/YY)"
+                        value={paymentDetails.expiry}
+                        onChange={(e) =>
+                          setPaymentDetails({ ...paymentDetails, expiry: e.target.value })
+                        }
+                      />
+                      <input
+                        type="text"
+                        placeholder="CVV"
+                        value={paymentDetails.cvv}
+                        onChange={(e) =>
+                          setPaymentDetails({ ...paymentDetails, cvv: e.target.value })
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* M-Pesa */}
+                  <label>
+                    <input
+                      type="radio"
+                      checked={paymentMethod === "M-Pesa"}
+                      onChange={() => setPaymentMethod("M-Pesa")}
+                    />{" "}
+                    Safaricom M-Pesa
+                  </label>
+                  {paymentMethod === "M-Pesa" && (
+                    <div className="payment-extra">
+                      <input
+                        type="text"
+                        placeholder="M-Pesa Phone Number"
+                        value={paymentDetails.mpesaNumber}
+                        onChange={(e) =>
+                          setPaymentDetails({ ...paymentDetails, mpesaNumber: e.target.value })
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* Cash on Delivery */}
+                  <label>
+                    <input
+                      type="radio"
+                      checked={paymentMethod === "Cash on Delivery"}
+                      onChange={() => setPaymentMethod("Cash on Delivery")}
+                    />{" "}
+                    Cash on Delivery
+                  </label>
+
+                  <div className="payment-actions">
+                    <button onClick={confirmPayment}>Confirm & Pay</button>
+                    <button onClick={() => setShowPayment(false)}>Cancel</button>
+                  </div>
+                  {errors.payment && <p className="error-message">{errors.payment}</p>}
+                </div>
+              )}
+              <Link to="/cart">Back to Cart</Link>
             </div>
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

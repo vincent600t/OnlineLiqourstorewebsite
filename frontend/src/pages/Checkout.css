@@ -1,0 +1,314 @@
+/* ✅ Page Background */
+.checkout-wrapper {
+  background: #1c1c1c;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: "Inter", Arial, sans-serif;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ Logo on the left */
+.checkout-logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;   /* logo on left */
+  width: 100px;
+}
+
+/* ✅ Navigation on the right */
+.checkout-nav {
+  position: absolute;
+  top: 28px;
+  right: 20px;  /* nav on right */
+  display: flex;
+  gap: 16px;
+}
+
+.checkout-nav a {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.checkout-nav a:hover {
+  color: #ff4d4d;
+}
+
+/* ✅ Container */
+.checkout-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-top: 80px; /* push content below logo + nav */
+  flex: 1; /* pushes footer down */
+}
+
+/* ✅ Title */
+.checkout-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #222;
+}
+
+/* ✅ Layout Grid */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ✅ Shipping Form */
+.checkout-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-form h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.form-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.form-fields input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-fields input:focus {
+  border-color: #000;
+}
+
+/* ✅ Delivery Options */
+.delivery-options {
+  margin-top: 20px;
+}
+
+.delivery-options h3 {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.delivery-options label {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ✅ Order Summary */
+.order-summary {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.order-summary h3 {
+  margin-top: 0;
+  font-weight: 700;
+}
+
+.order-items {
+  margin-top: 12px;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.order-item span:first-child {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-summary hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.summary-line,
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  font-size: 15px;
+}
+
+.summary-total {
+  margin-top: 10px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* ✅ Buttons */
+.summary-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-actions button {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.summary-actions button:hover {
+  background: #333;
+}
+
+.summary-actions a {
+  display: block;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #000;
+  color: #000;
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.summary-actions a:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ✅ Payment Methods */
+.payment-methods {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.payment-methods h3 {
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.payment-methods label {
+  display: block;
+  margin: 8px 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.payment-methods input[type="radio"] {
+  margin-right: 8px;
+  accent-color: #d32f2f; /* red accent */
+}
+
+.payment-extra {
+  margin: 10px 0 15px 20px;
+  padding: 12px;
+  background: #fafafa;
+  border-left: 3px solid #d32f2f;
+  border-radius: 6px;
+  animation: slideDown 0.3s ease;
+}
+
+.payment-extra input {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.payment-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.payment-actions button {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.payment-actions button:first-child {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.payment-actions button:first-child:hover {
+  background: #b71c1c;
+}
+
+.payment-actions button:last-child {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.payment-actions button:last-child:hover {
+  background: #e0e0e0;
+}
+
+/* ✅ Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-input {
+  border: 2px solid #e63946;
+  background: #ffe5e5;
+}
+
+.error-message {
+  color: #e63946;
+  font-size: 13px;
+  margin: 5px 0 15px;
+}
+
