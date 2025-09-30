@@ -1,6 +1,6 @@
 /* ✅ Page Background */
 .checkout-wrapper {
-  background: #1c1c1c;
+  background: whitesmoke;
   min-height: 100vh;
   padding: 40px 20px;
   font-family: "Inter", Arial, sans-serif;
@@ -28,7 +28,7 @@
 
 .checkout-nav a {
   text-decoration: none;
-  color: white;
+  color: black;
   font-weight: 600;
   transition: color 0.2s;
 }

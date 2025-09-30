@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #1c1c1c;
+  background: whitesmoke;
 }
 
 /* 🔹 Header Section */
@@ -40,7 +40,7 @@
   max-width: 1100px;
   margin: 50px auto;
   padding: 20px;
-  background: #fff;
+  background: grey;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
@@ -66,7 +66,7 @@
 }
 
 .cart-table th {
-  background: #f8f8f8;
+  background: grey;
   padding: 14px;
   font-size: 16px;
   font-weight: 600;
