@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext"; 
 import "./Checkout.css";
-import Footer from "./Footer";
 
 export default function Checkout() {
   const navigate = useNavigate();

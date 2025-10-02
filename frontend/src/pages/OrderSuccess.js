@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./OrderSuccess.css"; // ✅ import CSS
-import Footer from "./Footer";
 
 export default function OrderSuccess() {
   const [order, setOrder] = useState(null);
